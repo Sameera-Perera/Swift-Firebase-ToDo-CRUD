@@ -12,7 +12,7 @@ struct ToDoCard: View {
     var body: some View {
         HStack {
             HStack {
-                AsyncImage(url: URL(string: "https://cdn.pixabay.com/photo/2015/12/01/20/28/road-1072821_1280.jpg"))
+                AsyncImage(url: URL(string: data.image))
                 { image in image
                             .resizable()
                             .frame(width: 100, height: 100)

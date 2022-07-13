@@ -11,6 +11,8 @@ struct HomeView: View {
     @State var searchText = ""
     @State var isToDoDetailsActive = false
     
+    @StateObject var toDoViewModel = ToDoViewModel()
+    
     private var todoItems = [
         ToDoItem(
             title: "Meet Eddie for lunch",
@@ -37,7 +39,7 @@ struct HomeView: View {
             SearchBarField(text: $searchText)
             
             ScrollView(.vertical, showsIndicators: false) {
-                ForEach (todoItems, id: \.id) { val in
+                ForEach (toDoViewModel.todos, id: \.id) { val in
                     NavigationLink(destination: ToDoDetailsView(data: val)) {
                         ToDoCard(data: val)
                     }

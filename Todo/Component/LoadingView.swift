@@ -22,7 +22,6 @@ struct LoadingView<Content>: View where Content: View {
 
                 VStack {
                     Text("Loading...")
-//                    ActivityIndicator(isAnimating: .constant(true), style: .large)
                     ProgressView()
                 }
                 .frame(width: geometry.size.width / 2,

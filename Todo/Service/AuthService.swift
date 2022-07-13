@@ -43,34 +43,28 @@ class AuthService: AuthServiceProtocol {
     
     func signUp(user: UserDetails, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
         let db = Firestore.firestore()
-        db.collection("users").document(user.email).getDocument { (document, error) in
-            if let document = document, document.exists {
-                completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "This NIC Number already regiterd"])))
+        Auth.auth().createUser(withEmail: user.email, password: password) { (result, error) in
+            if error != nil {
+                completion(.failure(error!))
             } else {
-                Auth.auth().createUser(withEmail: user.email, password: password) { (result, error) in
-                    if error != nil {
-                        completion(.failure(error!))
+                guard let uid = Auth.auth().currentUser?.uid else { return }
+                let userData: [String: Any] = [
+                    "email": user.email,
+                    "first_name": user.firstName,
+                    "last_name": user.lastName,
+                ]
+                db.collection("user").document(uid).setData(userData) { err in
+                    if let err = err {
+                        completion(.failure(err))
                     } else {
-                        guard (Auth.auth().currentUser?.uid) != nil else { return }
-                        let userData: [String: Any] = [
-                            "email": user.email,
-                            "first_name": user.firstName,
-                            "last_name": user.lastName
-                        ]
-                        db.collection("users").document(user.email).setData(userData) { err in
-                            if let err = err {
-                                completion(.failure(err))
-                            } else {
-                                do {
-                                    let encoder = JSONEncoder()
-                                    if let encoded = try? encoder.encode(user) {
-                                        let defaults = UserDefaults.standard
-                                        defaults.set(encoded, forKey: "userDetails")
-                                    }
-                                }
-                                completion(.success(()))
+                        do {
+                            let encoder = JSONEncoder()
+                            if let encoded = try? encoder.encode(user) {
+                                let defaults = UserDefaults.standard
+                                defaults.set(encoded, forKey: "userDetails")
                             }
                         }
+                        completion(.success(()))
                     }
                 }
             }
