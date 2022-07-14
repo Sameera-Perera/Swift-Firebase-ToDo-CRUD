@@ -9,13 +9,14 @@ import SwiftUI
 
 struct ToDoEditView: View {
     @State var title = ""
+    @State var description = ""
     @State var isImageShow = false
     @State var inputImage:UIImage?
     
     var body: some View {
         VStack(){
             InputTextField(title: "Title", val: $title)
-            InputTextField(title: "Description", val: $title)
+            InputTextField(title: "Description", val: $description)
             HStack(){
                 Text("Image")
                     .foregroundColor(.gray.opacity(0.7))

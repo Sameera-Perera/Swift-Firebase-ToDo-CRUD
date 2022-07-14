@@ -68,6 +68,17 @@ struct ProfileView: View {
         .padding(.horizontal)
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear{
+                    let defaults = UserDefaults.standard
+                    if let user = defaults.object(forKey: "userDetails") as? Data {
+                        let decoder = JSONDecoder()
+                        if let loadedUser = try? decoder.decode(UserDetails.self, from: user) {
+                            firstName = loadedUser.firstName
+                            lastName = loadedUser.lastName
+                            email = loadedUser.email
+                        }
+                    }
+                }
     }
 }
 

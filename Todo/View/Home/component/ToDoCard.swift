@@ -16,7 +16,7 @@ struct ToDoCard: View {
                 { image in image
                             .resizable()
                             .frame(width: 100, height: 100)
-                            .scaledToFill()
+                            .scaledToFit()
                             .padding(.trailing)
                 } placeholder: {
                     ProgressView()

@@ -39,6 +39,7 @@ class ToDoViewModel: ObservableObject{
                     case .success:
                         self.isLoadingActive = false
                         self.infoMsg = "ToDo crate successfully"
+                        self.isInfoActive = true
                     case let .failure(error):
                         print(error)
                         self.isLoadingActive = false

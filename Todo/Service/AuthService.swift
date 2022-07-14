@@ -23,20 +23,28 @@ protocol AuthServiceProtocol {
 class AuthService: AuthServiceProtocol {
     
     func signIn(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        let db = Firestore.firestore()
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             if error != nil {
                 completion(.failure(error!))
             } else {
-//                do {
-//                    let user = try document.data(as: UserDetails.self)
-//                    let encoder = JSONEncoder()
-//                    if let encoded = try? encoder.encode(user) {
-//                        let defaults = UserDefaults.standard
-//                        defaults.set(encoded, forKey: "userDetails")
-//                    }
-//                }
-//                catch{return}
-                completion(.success(()))
+                guard let uid = Auth.auth().currentUser?.uid else { return }
+                db.collection("users").document(uid).getDocument { (document, error) in
+                    if let document = document, document.exists {
+                        do {
+                            let user = try document.data(as: UserDetails.self)
+                            let encoder = JSONEncoder()
+                            if let encoded = try? encoder.encode(user) {
+                                let defaults = UserDefaults.standard
+                                defaults.set(encoded, forKey: "userDetails")
+                            }
+                        }
+                        catch{return}
+                        completion(.success(()))
+                    } else{
+                        completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Invaild username"])))
+                    }
+                }
             }
         }
     }
@@ -95,10 +103,7 @@ class AuthService: AuthServiceProtocol {
                     let defaults = UserDefaults.standard
                     if let user = defaults.object(forKey: "userDetails") as? Data {
                         let decoder = JSONDecoder()
-                        if var loadedUser = try? decoder.decode(UserDetails.self, from: user) {
-//                            loadedUser.mobile = mobile
-//                            loadedUser.currentLocation = location
-                            
+                        if let loadedUser = try? decoder.decode(UserDetails.self, from: user) {
                             let encoder = JSONEncoder()
                             if let encoded = try? encoder.encode(loadedUser) {
                                 let defaults = UserDefaults.standard

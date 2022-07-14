@@ -57,11 +57,11 @@ struct ToDoDetailsView: View {
                .background(Color.green) // If you have this
                .cornerRadius(12)
                .padding()
-            Spacer()
         }
         .navigationTitle("ToDo Details")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: NavigationLink(destination: ToDoEditView()){
+        .navigationBarItems(trailing: NavigationLink(destination: ToDoEditView(
+            title: data.title, description: data.description)){
             //                Button(action: {}) {
                                   Image(systemName: "square.and.pencil")
                                     .imageScale(.large)
