@@ -20,6 +20,10 @@ protocol ToDoServiceProtocol {
         image: UIImage,
         completion: @escaping (Result<Void, Error>) -> Void)
     
+    func updateToDoItem(
+        todo: ToDoItem,
+        completion: @escaping (Result<Void, Error>) -> Void)
+    
     func uploadImage(
         image: UIImage,
         completion: @escaping (Result<String, Error>) -> Void)
@@ -30,6 +34,23 @@ protocol ToDoServiceProtocol {
 }
 
 class ToDoService: ToDoServiceProtocol {
+    func updateToDoItem(todo: ToDoItem, completion: @escaping (Result<Void, Error>) -> Void) {
+        let db = Firestore.firestore()
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        db.collection("user").document(uid).collection("todo").document(todo.id ?? "").updateData([
+            "title": todo.title,
+            "description": todo.description,
+            "image": todo.image,
+            "is_completed": todo.isCompleted
+                ]) { err in
+                    if let err = err {
+                        completion(.failure(err))
+                    } else {
+                        completion(.success(()))
+                    }
+            }
+    }
+    
     func createToDoItem(title: String, description: String, image: UIImage, completion: @escaping (Result<Void, Error>) -> Void) {
         let db = Firestore.firestore()
         guard let uid = Auth.auth().currentUser?.uid else { return }

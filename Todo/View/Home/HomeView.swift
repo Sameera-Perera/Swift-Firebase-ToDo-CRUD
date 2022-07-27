@@ -38,15 +38,24 @@ struct HomeView: View {
         VStack(){
             SearchBarField(text: $searchText)
             
-            ScrollView(.vertical, showsIndicators: false) {
-                ForEach (toDoViewModel.todos, id: \.id) { val in
-                    NavigationLink(destination: ToDoDetailsView(data: val)) {
-                        ToDoCard(data: val)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    
+            if(toDoViewModel.isLoadingActive){
+                VStack(){
+                    Spacer()
+                    ProgressView()
+                            .frame(width: 100, height: 100)
+                    Spacer()
                 }
-            }.padding(.top)
+            } else {
+                ScrollView(.vertical, showsIndicators: false) {
+                    ForEach (toDoViewModel.todos, id: \.id) { val in
+                        NavigationLink(destination: ToDoDetailsView(data: val)) {
+                            ToDoCard(data: val)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
+                    }
+                }.padding(.top)
+            }
             
             Spacer()
             
